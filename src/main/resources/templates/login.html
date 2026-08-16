@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusConnect - Login</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+        *{ box-sizing:border-box; }
+        html,body{ height:100%; margin:0; }
+        body{
+            font-family:'Inter', sans-serif;
+            background:
+                radial-gradient(circle at 15% 15%, rgba(255,255,255,0.08), transparent 40%),
+                linear-gradient(135deg, #1B4FCF 0%, #0B2F6B 100%);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            min-height:100vh;
+            padding:24px;
+        }
+
+        .auth-shell{
+            width:100%;
+            max-width:900px;
+            display:grid;
+            grid-template-columns: 1fr 1fr;
+            background:#fff;
+            border-radius:28px;
+            overflow:hidden;
+            box-shadow:0 30px 70px rgba(11,47,107,0.35);
+        }
+        @media (max-width:760px){
+            .auth-shell{ grid-template-columns:1fr; max-width:420px; }
+            .auth-hero{ display:none; }
+        }
+
+        .auth-hero{
+            position:relative;
+            background:linear-gradient(160deg, #2F6BFF 0%, #0B2F6B 100%);
+            color:#fff;
+            padding:44px 40px;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+            overflow:hidden;
+        }
+        .auth-hero::before{
+            content:"";
+            position:absolute;
+            width:280px; height:280px;
+            border-radius:50%;
+            background:rgba(255,255,255,0.08);
+            top:-60px; left:-90px;
+        }
+        .auth-hero::after{
+            content:"";
+            position:absolute;
+            width:180px; height:180px;
+            border-radius:50%;
+            background:rgba(255,255,255,0.12);
+            bottom:-50px; left:60px;
+        }
+        .hero-circle-accent{
+            position:absolute;
+            width:90px; height:90px;
+            border-radius:50%;
+            background:rgba(255,255,255,0.18);
+            bottom:40px; right:-20px;
+        }
+
+        .brand{
+            display:flex; align-items:center; gap:10px;
+            position:relative; z-index:1;
+        }
+        .brand svg{ width:30px; height:30px; }
+        .brand span{ font-family:'Poppins', sans-serif; font-weight:600; font-size:1.05rem; }
+
+        .hero-copy{ position:relative; z-index:1; margin-top:40px; }
+        .hero-copy h1{
+            font-family:'Poppins', sans-serif;
+            font-size:2.1rem;
+            font-weight:700;
+            margin:0 0 6px;
+            letter-spacing:0.01em;
+        }
+        .hero-copy p.tagline{
+            font-family:'Poppins', sans-serif;
+            font-size:0.8rem;
+            font-weight:600;
+            letter-spacing:0.12em;
+            text-transform:uppercase;
+            color:#BFD1FF;
+            margin:0 0 18px;
+        }
+        .hero-copy p.desc{
+            font-size:0.88rem;
+            line-height:1.6;
+            color:#DCE5FF;
+            max-width:280px;
+        }
+
+        .hero-foot{
+            position:relative; z-index:1;
+            font-size:0.72rem;
+            color:#AFC2F5;
+        }
+
+        .auth-form{
+            padding:44px 42px;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+        }
+        .auth-form h2{
+            font-family:'Poppins', sans-serif;
+            font-size:1.6rem;
+            font-weight:700;
+            color:#0B2F6B;
+            margin:0 0 4px;
+        }
+        .auth-form p.subtitle{
+            color:#8791A8;
+            font-size:0.88rem;
+            margin:0 0 24px;
+        }
+
+        .alert{
+            border-radius:8px;
+            padding:10px 14px;
+            font-size:0.84rem;
+            margin-bottom:16px;
+        }
+        .alert-danger{ background:#FDECEA; color:#C1443C; }
+        .alert-success{ background:#E7F6EC; color:#2E7D52; }
+
+        .field-group{ margin-bottom:16px; }
+        .field-group label{
+            display:block;
+            font-size:0.78rem;
+            font-weight:600;
+            color:#334066;
+            margin-bottom:6px;
+        }
+        .field-wrap{
+            display:flex; align-items:center;
+            border:1.5px solid #E3E7F1;
+            border-radius:10px;
+            padding:0 14px;
+            transition:border-color .15s, box-shadow .15s;
+            background:#FAFBFE;
+        }
+        .field-wrap:focus-within{
+            border-color:#2F6BFF;
+            box-shadow:0 0 0 3px rgba(47,107,255,0.12);
+            background:#fff;
+        }
+        .field-wrap i{ color:#9AA4C0; font-size:0.95rem; }
+        .field-wrap input{
+            border:0; outline:0; background:transparent;
+            padding:11px 10px;
+            font-size:0.92rem;
+            font-family:'Inter', sans-serif;
+            width:100%;
+            color:#1B2340;
+        }
+        .toggle-pass{
+            background:none; border:0; cursor:pointer;
+            font-size:0.76rem; font-weight:600;
+            color:#2F6BFF;
+            font-family:'Inter', sans-serif;
+            padding:4px;
+        }
+
+        .field-row{
+            display:flex; align-items:center; justify-content:space-between;
+            margin:2px 0 20px;
+            font-size:0.8rem;
+        }
+        .remember{ display:flex; align-items:center; gap:6px; color:#5B6072; }
+        .field-row a{ color:#2F6BFF; text-decoration:none; font-weight:500; }
+        .field-row a:hover{ text-decoration:underline; }
+
+        .btn-signin{
+            width:100%;
+            background:linear-gradient(135deg, #2F6BFF, #0B2F6B);
+            color:#fff;
+            border:0;
+            border-radius:10px;
+            padding:13px 16px;
+            font-size:0.95rem;
+            font-weight:600;
+            font-family:'Poppins', sans-serif;
+            cursor:pointer;
+            transition:opacity .15s, transform .1s;
+        }
+        .btn-signin:hover{ opacity:0.92; }
+        .btn-signin:active{ transform:translateY(1px); }
+
+        .auth-form .foot-note{
+            text-align:center;
+            margin-top:26px;
+            font-size:0.78rem;
+            color:#9AA0B0;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="auth-shell">
+
+    <div class="auth-hero">
+
+        <div class="brand">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 4 L36 12 L20 20 L4 12 Z" fill="#fff"/>
+                <path d="M10 16 V26 C10 29 14.5 32 20 32 C25.5 32 30 29 30 26 V16 L20 21 Z" fill="#BFD1FF"/>
+            </svg>
+            <span>CampusConnect</span>
+        </div>
+
+        <div class="hero-copy">
+            <p class="tagline">Welcome back</p>
+            <h1>Smart University Platform</h1>
+            <p class="desc">Attendance, assignments, courses and campus notices — connected for students, faculty and admins alike.</p>
+        </div>
+
+        <div class="hero-circle-accent"></div>
+
+        <p class="hero-foot">© 2026 CampusConnect</p>
+
+    </div>
+
+    <div class="auth-form">
+
+        <h2>Sign in</h2>
+        <p class="subtitle">Enter your credentials to continue</p>
+
+        <div th:if="${param.error}" class="alert alert-danger">
+            Invalid username or password!
+        </div>
+
+        <div th:if="${param.logout}" class="alert alert-success">
+            You have been logged out successfully.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+
+            <div class="field-group">
+                <label for="username">Username or email</label>
+                <div class="field-wrap">
+                    <i class="bi bi-person"></i>
+                    <input id="username" type="text" name="username" placeholder="Enter your username" required>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label for="password">Password</label>
+                <div class="field-wrap">
+                    <i class="bi bi-lock"></i>
+                    <input id="password" type="password" name="password" placeholder="Enter your password" required>
+                    <button type="button" class="toggle-pass" onclick="togglePassword()">SHOW</button>
+                </div>
+            </div>
+
+            <div class="field-row">
+                <label class="remember">
+                    <input type="checkbox" id="remember"> Remember me
+                </label>
+                <a href="#">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn-signin">Sign in</button>
+
+        </form>
+
+        <p class="foot-note">CampusConnect · Academic Term 2026</p>
+
+    </div>
+
+</div>
+
+<script>
+    function togglePassword() {
+        var input = document.getElementById('password');
+        var btn = document.querySelector('.toggle-pass');
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.textContent = 'HIDE';
+        } else {
+            input.type = 'password';
+            btn.textContent = 'SHOW';
+        }
+    }
+</script>
+
+</body>
+
+</html>

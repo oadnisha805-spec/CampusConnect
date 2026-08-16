@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+
+<div th:fragment="sidebar" class="sidebar">
+
+    <h2><i class="bi bi-mortarboard-fill"></i> CampusConnect</h2>
+
+    <ul>
+
+        <!-- Dashboard: routes to the correct role-specific page -->
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin-dashboard}">
+                <i class="bi bi-grid"></i> Dashboard
+            </a>
+        </li>
+        <li sec:authorize="hasRole('FACULTY')">
+            <a th:href="@{/faculty-dashboard}">
+                <i class="bi bi-grid"></i> Dashboard
+            </a>
+        </li>
+
+        <!-- Admin-only: student & faculty management -->
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/students}">
+                <i class="bi bi-people-fill"></i> Students
+            </a>
+        </li>
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/faculty}">
+                <i class="bi bi-person-badge-fill"></i> Faculty
+            </a>
+        </li>
+
+        <!-- Admin + Faculty: course & notice management -->
+        <li sec:authorize="hasAnyRole('ADMIN','FACULTY')">
+            <a th:href="@{/courses}">
+                <i class="bi bi-book-fill"></i> Courses
+            </a>
+        </li>
+        <li sec:authorize="hasAnyRole('ADMIN','FACULTY')">
+            <a th:href="@{/notices}">
+                <i class="bi bi-megaphone-fill"></i> Notices
+            </a>
+        </li>
+
+        <!-- Admin-only: fee management -->
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/fees}">
+                <i class="bi bi-cash-coin"></i> Fees
+            </a>
+        </li>
+
+    </ul>
+
+    <div class="logout">
+
+        <a th:href="@{/logout}">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

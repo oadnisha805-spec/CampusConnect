@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusConnect - Edit Assignment</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@600&display=swap');
+
+        *{ box-sizing:border-box; }
+        html,body{ margin:0; min-height:100%; }
+        body{ font-family:'Inter', sans-serif; background:#EAF0FC; padding:24px; color:#1B2340; }
+
+        .shell{
+            max-width:1280px; margin:0 auto; background:#fff; border-radius:28px;
+            box-shadow:0 20px 60px rgba(11,47,107,0.12);
+            display:grid; grid-template-columns:250px 1fr; overflow:hidden;
+            min-height:calc(100vh - 48px);
+        }
+        @media (max-width:900px){ .shell{ grid-template-columns:1fr; } .sidebar{ display:none; } }
+
+        .sidebar{ color:#fff; padding:28px 18px; display:flex; flex-direction:column; gap:26px; }
+        .sidebar-admin{ background:linear-gradient(160deg, #2F6BFF 0%, #0B2F6B 100%); }
+        .sidebar-faculty{ background:linear-gradient(160deg, #14B8C4 0%, #0B4A57 100%); }
+
+        .brand{ display:flex; align-items:center; gap:10px; padding:0 8px; }
+        .brand svg{ width:28px; height:28px; }
+        .brand span{ font-family:'Poppins', sans-serif; font-weight:600; font-size:1.02rem; }
+
+        .nav-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px; }
+        .nav-list a{
+            display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:12px;
+            font-size:0.88rem; font-weight:500; color:rgba(255,255,255,0.8); text-decoration:none;
+        }
+        .nav-list a:hover{ background:rgba(255,255,255,0.08); color:#fff; }
+        .sidebar-admin .nav-list a.active{ background:#fff; color:#0B2F6B; font-weight:600; }
+        .sidebar-faculty .nav-list a.active{ background:#fff; color:#0B4A57; font-weight:600; }
+
+        .sidebar-foot{ margin-top:auto; }
+        .sidebar-foot a{
+            display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:12px;
+            font-size:0.88rem; font-weight:500; color:#FFC9C0; text-decoration:none;
+        }
+        .sidebar-foot a:hover{ background:rgba(255,255,255,0.08); }
+
+        .main{ display:flex; flex-direction:column; min-width:0; }
+        .topbar{ display:flex; align-items:center; justify-content:space-between; padding:26px 34px 20px; }
+        .topbar h1{ font-family:'Poppins', sans-serif; font-size:1.35rem; font-weight:700; margin:0; color:#0B2340; }
+        .topbar p{ margin:3px 0 0; font-size:0.84rem; color:#8791A8; }
+        .avatar{
+            width:38px; height:38px; border-radius:50%;
+            background:linear-gradient(135deg, #2F6BFF, #0B2F6B); color:#fff;
+            display:flex; align-items:center; justify-content:center;
+            font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:0.8rem;
+        }
+
+        .content{ padding:8px 34px 34px; }
+        .page-header{ margin-bottom:18px; }
+        .page-header h2{ font-family:'Poppins', sans-serif; font-size:1.1rem; font-weight:700; color:#0B2340; margin:0; }
+        .page-header p{ color:#8791A8; font-size:0.84rem; margin:3px 0 0; }
+
+        .form-card{ background:#F8F9FE; border-radius:20px; padding:26px 28px; max-width:560px; }
+        .form-group{ margin-bottom:16px; }
+        .form-group label{ display:block; font-size:0.8rem; font-weight:600; color:#334066; margin-bottom:6px; }
+        .form-control, select.form-control{
+            width:100%; border:1.5px solid #E3E7F1; border-radius:10px; padding:10px 14px;
+            font-size:0.92rem; font-family:'Inter', sans-serif; color:#1B2340; background:#fff;
+        }
+        .form-control:focus{ outline:0; border-color:#2F6BFF; box-shadow:0 0 0 3px rgba(47,107,255,0.12); }
+        textarea.form-control{ min-height:100px; resize:vertical; }
+
+        .form-actions{ display:flex; gap:12px; margin-top:8px; }
+        .btn-primary{
+            display:inline-flex; align-items:center; gap:8px;
+            background:linear-gradient(135deg, #2F6BFF, #0B2F6B); color:#fff;
+            border:0; border-radius:10px; padding:11px 20px;
+            font-size:0.9rem; font-weight:600; cursor:pointer;
+        }
+        .btn-primary:hover{ opacity:0.92; }
+        .btn-secondary{
+            background:#fff; color:#5B6072; border:1.5px solid #E3E7F1; border-radius:10px;
+            padding:11px 20px; font-size:0.9rem; font-weight:600; text-decoration:none;
+        }
+        .btn-secondary:hover{ background:#F7F8FB; }
+    </style>
+</head>
+
+<body>
+
+<div class="shell">
+
+    <aside class="sidebar sidebar-admin" sec:authorize="hasRole('ADMIN')">
+        <div class="brand">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 4 L36 12 L20 20 L4 12 Z" fill="#fff"/>
+                <path d="M10 16 V26 C10 29 14.5 32 20 32 C25.5 32 30 29 30 26 V16 L20 21 Z" fill="#BFD1FF"/>
+            </svg>
+            <span>CampusConnect</span>
+        </div>
+        <ul class="nav-list">
+            <li><a th:href="@{/admin-dashboard}"><i class="bi bi-grid"></i> Dashboard</a></li>
+            <li><a th:href="@{/students}"><i class="bi bi-people-fill"></i> Students</a></li>
+            <li><a th:href="@{/faculty}"><i class="bi bi-person-badge-fill"></i> Faculty</a></li>
+            <li><a th:href="@{/courses}"><i class="bi bi-book-fill"></i> Courses</a></li>
+            <li><a th:href="@{/notices}"><i class="bi bi-megaphone-fill"></i> Notices</a></li>
+            <li><a th:href="@{/fees}"><i class="bi bi-cash-coin"></i> Fees</a></li>
+        </ul>
+        <div class="sidebar-foot">
+            <a th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        </div>
+    </aside>
+
+    <aside class="sidebar sidebar-faculty" sec:authorize="hasRole('FACULTY')">
+        <div class="brand">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 4 L36 12 L20 20 L4 12 Z" fill="#fff"/>
+                <path d="M10 16 V26 C10 29 14.5 32 20 32 C25.5 32 30 29 30 26 V16 L20 21 Z" fill="#C9F0F3"/>
+            </svg>
+            <span>CampusConnect</span>
+        </div>
+        <ul class="nav-list">
+            <li><a th:href="@{/faculty-dashboard}"><i class="bi bi-grid"></i> Dashboard</a></li>
+            <li><a th:href="@{/courses}"><i class="bi bi-book-fill"></i> Courses</a></li>
+            <li><a th:href="@{/assignments}" class="active"><i class="bi bi-pencil-square"></i> Assignments</a></li>
+            <li><a th:href="@{/attendance}"><i class="bi bi-calendar-check"></i> Attendance</a></li>
+            <li><a th:href="@{/notices}"><i class="bi bi-megaphone-fill"></i> Notices</a></li>
+        </ul>
+        <div class="sidebar-foot">
+            <a th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        </div>
+    </aside>
+
+    <div class="main">
+
+        <div class="topbar">
+            <div>
+                <h1>Edit Assignment</h1>
+                <p>Smart University Management System</p>
+            </div>
+            <div class="avatar">
+                <span sec:authorize="hasRole('ADMIN')">AD</span>
+                <span sec:authorize="hasRole('FACULTY')">FA</span>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <div class="page-header">
+                <h2>Edit assignment</h2>
+                <p>Update this assignment.</p>
+            </div>
+
+            <div class="form-card">
+                <form th:action="@{/update-assignment}" th:object="${assignment}" method="post">
+
+                    <input type="hidden" th:field="*{id}">
+
+                    <div class="form-group">
+                        <label for="courseId">Course</label>
+                        <select id="courseId" th:field="*{courseId}" class="form-control" required>
+                            <option th:each="c : ${courses}"
+                                    th:value="${c.id}"
+                                    th:text="${c.courseName + ' (' + c.courseCode + ')'}"></option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input id="title" type="text" th:field="*{title}" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" th:field="*{description}" class="form-control" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dueDate">Due date</label>
+                        <input id="dueDate" type="date" th:field="*{dueDate}" class="form-control" required>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="bi bi-check-lg"></i> Update assignment
+                        </button>
+                        <a th:href="@{/assignments}" class="btn-secondary">Cancel</a>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

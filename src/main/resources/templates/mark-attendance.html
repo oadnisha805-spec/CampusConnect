@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Mark Attendance</title>
+
+</head>
+
+
+<body>
+
+
+<h1>Mark Student Attendance</h1>
+
+
+
+<form th:action="@{/save-attendance}"
+      th:object="${attendance}"
+      method="post">
+
+
+    <label>Student Name:</label>
+    <input type="text" th:field="*{studentName}">
+    <br><br>
+
+
+    <label>Course:</label>
+    <input type="text" th:field="*{course}">
+    <br><br>
+
+
+    <label>Date:</label>
+    <input type="text" th:field="*{date}">
+    <br><br>
+
+
+    <label>Status:</label>
+
+    <select th:field="*{status}">
+
+        <option value="Present">
+            Present
+        </option>
+
+        <option value="Absent">
+            Absent
+        </option>
+
+    </select>
+
+
+    <br><br>
+
+
+    <button type="submit">
+        Save Attendance
+    </button>
+
+
+</form>
+
+
+</body>
+</html>

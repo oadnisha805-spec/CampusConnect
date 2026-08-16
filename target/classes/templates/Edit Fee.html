@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusConnect - Edit Fee</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/table.css}">
+
+    <style>
+        .form-card select.form-control{
+            width:100%;
+            border:1px solid var(--border);
+            border-radius:8px;
+            padding:10px 12px;
+            font-size:0.92rem;
+            font-family:var(--font-body);
+            color:var(--text);
+            background:#fff;
+        }
+        .form-card select.form-control:focus{
+            outline:0;
+            border-color:var(--indigo-lt);
+            box-shadow:0 0 0 3px rgba(76,95,176,0.15);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="main-content">
+
+        <div th:replace="~{fragments/header :: header('Edit Fee')}"></div>
+
+        <div class="page-header">
+            <div>
+                <h1>Edit fee</h1>
+                <p>Update this fee record.</p>
+            </div>
+        </div>
+
+        <div class="form-card">
+
+            <form th:action="@{/update-fee}" th:object="${fee}" method="post">
+
+                <input type="hidden" th:field="*{id}">
+
+                <div class="form-group">
+                    <label for="studentId">Student</label>
+                    <select id="studentId" th:field="*{studentId}" class="form-control" required>
+                        <option th:each="s : ${students}"
+                                th:value="${s.id}"
+                                th:text="${s.name + ' (' + s.email + ')'}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="semester">Semester</label>
+                    <input id="semester" type="text" th:field="*{semester}" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">Amount</label>
+                    <input id="amount" type="number" step="0.01" th:field="*{amount}" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dueDate">Due date</label>
+                    <input id="dueDate" type="date" th:field="*{dueDate}" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" th:field="*{status}" class="form-control" required>
+                        <option value="Unpaid">Unpaid</option>
+                        <option value="Paid">Paid</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> Update fee
+                    </button>
+                    <a th:href="@{/fees}" class="btn btn-secondary">Cancel</a>
+                </div>
+
+            </form>
+
+        </div>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

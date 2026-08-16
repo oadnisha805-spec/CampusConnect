@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusConnect - Faculty Dashboard</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@600&display=swap');
+
+        *{ box-sizing:border-box; }
+        html,body{ margin:0; min-height:100%; }
+        body{
+            font-family:'Inter', sans-serif;
+            background:#E7F5F6;
+            padding:24px;
+            color:#0B2340;
+        }
+
+        .shell{
+            max-width:1280px;
+            margin:0 auto;
+            background:#fff;
+            border-radius:28px;
+            box-shadow:0 20px 60px rgba(11,74,87,0.14);
+            display:grid;
+            grid-template-columns:250px 1fr;
+            overflow:hidden;
+            min-height:calc(100vh - 48px);
+        }
+        @media (max-width:900px){
+            .shell{ grid-template-columns:1fr; }
+            .sidebar{ display:none; }
+        }
+
+        .sidebar{
+            background:linear-gradient(160deg, #14B8C4 0%, #0B4A57 100%);
+            color:#fff;
+            padding:28px 18px;
+            display:flex;
+            flex-direction:column;
+            gap:26px;
+        }
+        .brand{ display:flex; align-items:center; gap:10px; padding:0 8px; }
+        .brand svg{ width:28px; height:28px; }
+        .brand span{ font-family:'Poppins', sans-serif; font-weight:600; font-size:1.02rem; }
+
+        .nav-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px; }
+        .nav-list a{
+            display:flex; align-items:center; gap:10px;
+            padding:11px 14px;
+            border-radius:12px;
+            font-size:0.88rem;
+            font-weight:500;
+            color:#C9F0F3;
+            text-decoration:none;
+            transition:background .15s, color .15s;
+        }
+        .nav-list a:hover{ background:rgba(255,255,255,0.08); color:#fff; }
+        .nav-list a.active{ background:#fff; color:#0B4A57; font-weight:600; }
+
+        .sidebar-foot{ margin-top:auto; }
+        .sidebar-foot a{
+            display:flex; align-items:center; gap:10px;
+            padding:11px 14px;
+            border-radius:12px;
+            font-size:0.88rem;
+            font-weight:500;
+            color:#FFC9C0;
+            text-decoration:none;
+        }
+        .sidebar-foot a:hover{ background:rgba(255,255,255,0.08); }
+
+        .main{ display:flex; flex-direction:column; min-width:0; }
+
+        .topbar{
+            display:flex; align-items:center; justify-content:space-between;
+            padding:26px 34px 20px;
+        }
+        .topbar h1{ font-family:'Poppins', sans-serif; font-size:1.35rem; font-weight:700; margin:0; color:#0B4A57; }
+        .topbar p{ margin:3px 0 0; font-size:0.84rem; color:#7C97A0; }
+
+        .topbar-actions{ display:flex; align-items:center; gap:16px; }
+        .avatar-wrap{ position:relative; }
+        .avatar{
+            width:38px; height:38px; border-radius:50%;
+            background:linear-gradient(135deg, #14B8C4, #0B4A57);
+            color:#fff;
+            display:flex; align-items:center; justify-content:center;
+            font-family:'IBM Plex Mono', monospace;
+            font-weight:600; font-size:0.8rem;
+            cursor:pointer; border:0;
+        }
+        .avatar-menu{
+            position:absolute; right:0; top:46px;
+            background:#fff; border-radius:12px;
+            box-shadow:0 10px 30px rgba(11,74,87,0.2);
+            padding:6px; min-width:140px; display:none; z-index:10;
+        }
+        .avatar-menu.open{ display:block; }
+        .avatar-menu a{
+            display:flex; align-items:center; gap:8px;
+            padding:9px 12px; border-radius:8px;
+            font-size:0.85rem; color:#C1443C; text-decoration:none;
+        }
+        .avatar-menu a:hover{ background:#FDECEA; }
+
+        .content{ padding:8px 34px 34px; }
+
+        .welcome{ margin-bottom:24px; }
+        .welcome h2{ font-family:'Poppins', sans-serif; font-size:1.3rem; font-weight:700; color:#0B4A57; margin:0; }
+        .welcome p{ color:#7C97A0; font-size:0.88rem; margin:4px 0 0; }
+
+        .action-list{ display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:14px; }
+        .action-row{
+            display:flex; align-items:center; gap:14px;
+            background:#F1FAFB;
+            border-radius:16px;
+            padding:18px;
+            text-decoration:none;
+            transition:background .15s, transform .1s;
+        }
+        .action-row:hover{ background:#E4F5F7; transform:translateY(-2px); }
+        .action-row .icon{
+            width:44px; height:44px; flex:none;
+            border-radius:12px;
+            background:#fff;
+            display:flex; align-items:center; justify-content:center;
+            color:#14B8C4; font-size:1.1rem;
+        }
+        .action-row .label{ font-size:0.94rem; font-weight:600; color:#0B2340; }
+        .action-row .desc{ font-size:0.79rem; color:#7C97A0; margin-top:1px; }
+    </style>
+</head>
+
+<body>
+
+<div class="shell">
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 4 L36 12 L20 20 L4 12 Z" fill="#fff"/>
+                <path d="M10 16 V26 C10 29 14.5 32 20 32 C25.5 32 30 29 30 26 V16 L20 21 Z" fill="#C9F0F3"/>
+            </svg>
+            <span>CampusConnect</span>
+        </div>
+
+        <ul class="nav-list">
+            <li><a th:href="@{/faculty-dashboard}" class="active"><i class="bi bi-grid"></i> Dashboard</a></li>
+            <li><a th:href="@{/courses}"><i class="bi bi-book-fill"></i> Courses</a></li>
+            <li><a th:href="@{/assignments}"><i class="bi bi-pencil-square"></i> Assignments</a></li>
+            <li><a th:href="@{/attendance}"><i class="bi bi-calendar-check"></i> Attendance</a></li>
+            <li><a th:href="@{/notices}"><i class="bi bi-megaphone-fill"></i> Notices</a></li>
+        </ul>
+
+        <div class="sidebar-foot">
+            <a th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        </div>
+
+    </aside>
+
+    <div class="main">
+
+        <div class="topbar">
+            <div>
+                <h1>Faculty Dashboard</h1>
+                <p>Smart University Management System</p>
+            </div>
+
+            <div class="topbar-actions">
+                <div class="avatar-wrap">
+                    <button type="button" class="avatar" onclick="document.getElementById('avatarMenu').classList.toggle('open')">FA</button>
+                    <div class="avatar-menu" id="avatarMenu">
+                        <a th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <div class="welcome">
+                <h2>Welcome, Faculty</h2>
+                <p>Manage your courses, assignments and attendance.</p>
+            </div>
+
+            <div class="action-list">
+
+                <a th:href="@{/courses}" class="action-row">
+                    <div class="icon"><i class="bi bi-book-fill"></i></div>
+                    <div>
+                        <div class="label">Courses</div>
+                        <div class="desc">Manage courses</div>
+                    </div>
+                </a>
+
+                <a th:href="@{/assignments}" class="action-row">
+                    <div class="icon"><i class="bi bi-pencil-square"></i></div>
+                    <div>
+                        <div class="label">Assignments</div>
+                        <div class="desc">View assignments</div>
+                    </div>
+                </a>
+
+                <a th:href="@{/attendance}" class="action-row">
+                    <div class="icon"><i class="bi bi-calendar-check"></i></div>
+                    <div>
+                        <div class="label">Attendance</div>
+                        <div class="desc">View attendance records</div>
+                    </div>
+                </a>
+
+                <a th:href="@{/notices}" class="action-row">
+                    <div class="icon"><i class="bi bi-megaphone-fill"></i></div>
+                    <div>
+                        <div class="label">Notices</div>
+                        <div class="desc">Manage notices</div>
+                    </div>
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

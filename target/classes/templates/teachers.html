@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Teachers - CampusConnect</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+
+<body>
+
+    <h1>Teacher Management</h1>
+
+    <table border="1">
+
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Subject</th>
+        </tr>
+
+
+        <tr th:each="teacher : ${teachers}">
+
+            <td th:text="${teacher.id}"></td>
+            <td th:text="${teacher.name}"></td>
+            <td th:text="${teacher.email}"></td>
+            <td th:text="${teacher.department}"></td>
+            <td th:text="${teacher.subject}"></td>
+
+        </tr>
+
+
+    </table>
+
+
+</body>
+
+</html>
